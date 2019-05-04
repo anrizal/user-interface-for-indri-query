@@ -1,0 +1,7 @@
+[common-configs]
+index_path = index
+data_path = data
+index_memory = 1G
+class = trectext
+stemmer = krovetz
+field = p
