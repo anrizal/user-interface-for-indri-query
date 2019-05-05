@@ -101,6 +101,7 @@ class IndexPrompt(Cmd):
 
     # remove index
     def do_remove(self, inp):
+        print("do_remove ", inp)
         self.IQ.remove_index(inp)
 
     def help_remove(self):
@@ -135,32 +136,32 @@ class QueryPrompt(Cmd):
 
     # add index choice
     def do_use(self, inp):
-        self.prompt[:-3]+':'+inp+'>>'
+        self.prompt = self.prompt[:-2]+':' + inp + '>>'
         self.IQ.switch_index(inp)
 
     def help_use(self):
         print('select index for query. i.ex: use index-name')
 
     # add assements file
-    def do_selectAssesmentFile(self, inp):
-        self.IQ.switch_assesment_file(inp)
+    def do_selectQrels(self, inp):
+        self.IQ.switch_qrels_file(inp)
 
-    def help_selectAssesmentFile(self):
-        print('select Assesment File for evaluation. i.ex: selectAssesmentFile assesment-file-path')
+    def help_selectQrels(self):
+        print('select Qrels File for evaluation. i.ex: selectQrels qrels-file-path')
 
     def default(self, inp):
          
         self.IQ.apply_query(inp)
         
-        #check that query number not empty, index not empty, assesment file not empty
-        if self.IQ.index_name and self.IQ.q_num and self.IQ.q_text and self.IQ.assesment_file:
+        #check that query number not empty, index not empty, qrels file not empty
+        if self.IQ.index_name and self.IQ.q_num and self.IQ.q_text and self.IQ.qrels_file:
             self.IQ.create_query()
             self.IQ.run_query()
 
             #evaluate
             self.IQ.evaluate_query_result()
         else:
-            print("either index is not selected or query number is not entered or assesment file is not entered")
+            print("either index is not selected or query number is not entered or qrels file is not entered")
 
     do_EOF = do_exit
     help_EOF = help_exit

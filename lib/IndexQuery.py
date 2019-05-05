@@ -17,7 +17,7 @@ class IndexQuery:
                 corpus_path,
                 q_num, 
                 q_text,
-                assesment_file):
+                qrels_file):
         #get common configs        
         cf = cp.RawConfigParser()   
         configFilePath = r'config/common.txt'
@@ -38,7 +38,7 @@ class IndexQuery:
         self.query_parameters_path = self.config_path + "/query.xml"
         self.q_num = q_num
         self.q_text = q_text
-        self.assesment_file = assesment_file
+        self.qrels_file = qrels_file
      
     '''
     Creating Index Parameter XML file
@@ -104,9 +104,11 @@ class IndexQuery:
     Remove Index
     '''
     def remove_index(self, index_name):
-        shutil.rmtree(os.path.join(self.index_path, self.index_name))
-        os.remove(os.path.join(self.config_path, index_name+"_index_parameters.xml"))
-
+        if os.path.isdir(os.path.join(self.index_path, index_name)):
+            shutil.rmtree(os.path.join(self.index_path, index_name))
+            os.remove(os.path.join(self.config_path, index_name+"_index_parameters.xml"))
+        else:
+            print(index_name,"does not exist")
     '''
     Building Index
     '''
@@ -141,11 +143,11 @@ class IndexQuery:
         self.q_num = query_number
 
     '''
-    Switch Assesment File
+    Switch Qrels File
     '''
-    def switch_assesment_file(self, assesment_file_path):
-        if os.path.exists(assesment_file_path):
-            self.assesment_file = assesment_file_path
+    def switch_qrels_file(self, qrels_file_path):
+        if os.path.exists(qrels_file_path):
+            self.qrels_file = qrels_file_path
         else:
             print("the path/file you enter does not exist/reachable")
     
@@ -165,8 +167,11 @@ class IndexQuery:
     Evaluate Query Result
     '''
     def evaluate_query_result(self):
-        output = sp.check_output(["trec_eval -q -m iprec_at_recall " + self.assesment_file + " " + self.data_path + "/my_run1_rankings.trec | awk '{print $3 }'"], shell=True).decode('UTF-8').splitlines()
-        self.create_precision_recall_graph(output[:11])
+        output = sp.call(["trec_eval -q -m official " + self.qrels_file + " " + self.data_path + "/my_run1_rankings.trec"], shell=True)
+        print(output)
+        output_for_graph = sp.check_output(["trec_eval -q -m iprec_at_recall " + self.qrels_file + " " + self.data_path + "/my_run1_rankings.trec | awk '{print $3 }'"], shell=True).decode('UTF-8').splitlines()
+        print('Precision Recall graph has been created')
+        self.create_precision_recall_graph(output_for_graph[:11])
     
     '''
     Show index_parameters.xml
