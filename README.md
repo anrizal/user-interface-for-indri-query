@@ -14,7 +14,7 @@ Make sure the following python modules for python 3.6 are available
 6. shutil (ussually already exist with python 3.6)
 7. os (ussually already exist with python 3.6)
 
-Make sure you have the following program install. Check with "which" in command prompt
-1. IndriBuildIndex
+Make sure you have the following program install. Check with "which" in command prompt. You need to be able to run the following program from anywhere. The python wrapper will call these program via subprocess modules.
+1. IndriBuildIndex 
 2. IndriRunQuery
 3. trec_eval (https://github.com/usnistgov/trec_eval)

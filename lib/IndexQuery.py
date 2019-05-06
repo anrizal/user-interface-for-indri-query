@@ -169,9 +169,9 @@ class IndexQuery:
     def evaluate_query_result(self):
         output = sp.call(["trec_eval -q -m official " + self.qrels_file + " " + self.data_path + "/my_run1_rankings.trec"], shell=True)
         print(output)
-        output_for_graph = sp.check_output(["trec_eval -q -m iprec_at_recall " + self.qrels_file + " " + self.data_path + "/my_run1_rankings.trec | awk '{print $3 }'"], shell=True).decode('UTF-8').splitlines()
+        output_for_graph = sp.check_output(["trec_eval -q -m map -m iprec_at_recall " + self.qrels_file + " " + self.data_path + "/my_run1_rankings.trec | awk '{print $3 }'"], shell=True).decode('UTF-8').splitlines()
         print('Precision Recall graph has been created')
-        self.create_precision_recall_graph(output_for_graph[:11])
+        self.create_precision_recall_graph(output_for_graph[0],output_for_graph[1:12])
     
     '''
     Show index_parameters.xml
@@ -188,7 +188,7 @@ class IndexQuery:
     '''
     Create Precision Recall graph
     '''
-    def create_precision_recall_graph(self, iprec_at_recall):
+    def create_precision_recall_graph(self, map, iprec_at_recall):
         # x axis values (Recall)
         x = [0,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.80,0.90,1.00] 
         # corresponding y axis values (Precision)
@@ -199,6 +199,7 @@ class IndexQuery:
         plt.gca().invert_yaxis()
         plt.xlabel('Recall') 
         plt.ylabel('Precision') 
-        plt.title('Precision Recall graph') 
+        plt.title('Precision Recall graph')
+        plt.text(0.0, 0.0, "map = " + map, family="monospace") 
         plt.show() 
 
